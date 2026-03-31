@@ -1,6 +1,7 @@
 package br.com.fiap.study_apir.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,32 +22,36 @@ import br.com.fiap.study_apir.repository.RepositoryProdutoMockup;
 @RequestMapping("api/${api.version}/produtos")
 public class ProdutoController {
 
-    private RepositoryProdutoMockup mockup = new RepositoryProdutoMockup();
+private RepositoryProdutoMockup mockup = new RepositoryProdutoMockup();
 
     @PostMapping
-    public ResponseEntity<String> createProduto(){
-        return ResponseEntity.status(HttpStatus.CREATED).body("Produto Criado");
+    public ResponseEntity<String> create(){
+        return ResponseEntity.status(HttpStatus.CREATED).body("Produto criado");
     }
-
     @GetMapping
-    public ResponseEntity<Produto> findProdutoById(@PathVariable Long id){
-        Produto produto = mockup.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(produto);
+    public ResponseEntity<List<Produto>> findAll(){
+      return ResponseEntity.status(HttpStatus.OK).body(mockup.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Produto>> findAll(@PathVariable Long id){
-        Produto produto = mockup.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(mockup.findAll());
-    }
+    public ResponseEntity<Produto> findById(@PathVariable Long id){
+    //    return mockup.findById(id).
+    //    map(p -> ResponseEntity.ok(p))
+    //    .orElse(ResponseEntity.notFound().build());
+        return mockup
+        .findById(id)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+
+}
 
     @PutMapping
-    public ResponseEntity<String> updateProduto(){
+    public  ResponseEntity<String> update(){
         return ResponseEntity.status(HttpStatus.OK).body("Produto atualizado");
     }
-
     @DeleteMapping
-   public ResponseEntity<String> deleteProduto(){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Produto Excluido");
-   }
+    public ResponseEntity<String> delete(){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Produto excluido");
+    }
 }
+
